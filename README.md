@@ -60,3 +60,9 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 =======
 # AI_Career_Navigator
 >>>>>>> aced04028cfa0735431eea0cb834db16f92358cb
+
+
+
+git add .
+git commit -m "Daily update %date%"
+git push origin main
