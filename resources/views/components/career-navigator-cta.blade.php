@@ -97,7 +97,7 @@
         <!-- Scrollable message body -->
         <div class="cnv-body cnv-scroll flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-slate-950/40">
             <div class="flex gap-2">
-                <span class="text-base leading-none">🧭</span>
+                <span class="text-base leading-none">✨</span>
                 <div class="bg-indigo-500/10 border border-indigo-500/20 text-slate-200 text-sm rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]">
                     Hi! I'm tracking your profile{{ $currentRole ? " as a {$currentRole}" : '' }}{{ $targetIndustry ? " heading into {$targetIndustry}" : '' }}. How can I help today?
                 </div>
@@ -133,7 +133,7 @@
         aria-label="Open Career Navigator assistant"
     >
         <span class="absolute inset-0 rounded-full bg-violet-500/40 animate-ping"></span>
-        <span class="cnv-icon relative z-10 leading-none">🧭</span>
+        <span class="cnv-icon relative z-10 leading-none">✨</span>
     </button>
 </div>
 
