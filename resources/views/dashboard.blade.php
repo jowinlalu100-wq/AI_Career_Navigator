@@ -517,60 +517,100 @@
 
     .cnv-pagenav {
         position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
+        top: 50%;
+        right: 26px;
+        transform: translateY(-50%);
         z-index: 500;
         display: flex;
-        gap: 4px;
-        padding: 6px;
-        border-radius: 999px;
-        background: rgba(17, 20, 46, 0.7);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        flex-direction: column;
+        gap: 22px;
+        background: transparent;
     }
 
     .cnv-pagenav-link {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: .7rem;
-        letter-spacing: .14em;
-        text-transform: uppercase;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
         text-decoration: none;
-        color: #8d92b8;
-        padding: 9px 18px;
-        border-radius: 999px;
-        transition: color .2s ease, background .2s ease;
+        padding: 4px 0;
     }
 
-    .cnv-pagenav-link:hover {
-        color: #eef0fb;
+    .cnv-pagenav-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+        transition: all .4s cubic-bezier(.16, 1, .3, 1);
+        flex-shrink: 0;
     }
 
-    .cnv-pagenav-link.active {
-        color: #06061a;
-        background: linear-gradient(120deg, #43e6c8, #7c6cff);
-        box-shadow: 0 6px 18px rgba(67, 230, 200, 0.35);
+    .cnv-pagenav-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: .62rem;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.35);
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(6px);
+        transition: all .4s cubic-bezier(.16, 1, .3, 1);
     }
 
-    @media (max-width: 600px) {
-        .cnv-pagenav {
-            top: 12px;
-            gap: 2px;
-            padding: 4px;
+    .cnv-pagenav-link:hover .cnv-pagenav-label {
+        opacity: .7;
+        transform: translateX(0);
+    }
+
+    .cnv-pagenav-link:hover .cnv-pagenav-dot {
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Active state — enlarge + white glow */
+    .cnv-pagenav-link.active .cnv-pagenav-dot {
+        width: 11px;
+        height: 11px;
+        background: #ffffff;
+        box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.55), 0 0 24px 6px rgba(255, 255, 255, 0.25);
+    }
+
+    .cnv-pagenav-link.active .cnv-pagenav-label {
+        opacity: 1;
+        transform: translateX(0);
+        color: #ffffff;
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .cnv-pagenav-dot,
+        .cnv-pagenav-label {
+            transition: none;
         }
+    }
 
-        .cnv-pagenav-link {
-            padding: 7px 12px;
-            font-size: .62rem;
+    /* Off entirely on mobile */
+    @media (max-width: 900px) {
+        .cnv-pagenav {
+            display: none;
         }
     }
 </style>
 <nav class="cnv-pagenav">
-    <a href="#home" class="cnv-pagenav-link active" data-target="home">Dashboard</a>
-    <a href="#about" class="cnv-pagenav-link" data-target="about">About</a>
-    <a href="#contact" class="cnv-pagenav-link" data-target="contact">Contact</a>
+    <a href="#home" class="cnv-pagenav-link active" data-target="home">
+        <span class="cnv-pagenav-dot"></span>
+        <span class="cnv-pagenav-label">Dashboard</span>
+    </a>
+    <a href="#about" class="cnv-pagenav-link" data-target="about">
+        <span class="cnv-pagenav-dot"></span>
+        <span class="cnv-pagenav-label">About</span>
+    </a>
+    <a href="#contact" class="cnv-pagenav-link" data-target="contact">
+        <span class="cnv-pagenav-dot"></span>
+        <span class="cnv-pagenav-label">Contact</span>
+    </a>
 </nav>
 <div class="cnv-scroll-pages">
 
@@ -710,6 +750,7 @@
 
 
             </div>
+            
 
         </div>
     </section>
@@ -881,6 +922,31 @@
                 align-items: flex-start;
             }
         }
+        .dash-footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    letter-spacing: .08em;
+    color: var(--text-dim);
+}
+.dash-footer-dot {
+    color: var(--violet);
+    opacity: .6;
+}
+
+@media (max-width: 600px) {
+    .dash-footer {
+        font-size: .6rem;
+        gap: 6px;
+    }
+}
     </style>
 
     <section id="about" class="cnv-page info-section">
@@ -917,8 +983,8 @@
             <span class="stack-chip">Blade</span>
             <span class="stack-chip">MySQL</span>
             <span class="stack-chip">Vanilla JS</span>
-            <span class="stack-chip">Three.js</span>
-            <span class="stack-chip">CSS Glassmorphism</span>
+            <span class="stack-chip">Eloquent ORM</span>
+            <span class="stack-chip">Responsive Design</span>
         </div>
     </section>
 
@@ -935,11 +1001,18 @@
                 <p>Questions, suggestions, or partnership ideas — always open to hearing them.</p>
             </div>
             <div class="contact-links">
-                <a href="mailto:your-email@example.com">Email Me</a>
-                <a href="https://github.com/your-username" class="secondary" target="_blank">GitHub</a>
-                <a href="https://linkedin.com/in/your-username" class="secondary" target="_blank">LinkedIn</a>
+                <a href="mailto:jowinlalu100@gmail.com">Email Me</a>
+                <a href="https://github.com/jowinlalu100-wq" class="secondary" target="_blank">GitHub</a>
+                <a href="www.linkedin.com/in/jowin-lalu" class="secondary" target="_blank">LinkedIn</a>
             </div>
         </div>
+        <footer class="dash-footer">
+                <span class="dash-footer-text">AI Career Navigator</span>
+                <span class="dash-footer-dot">•</span>
+                <span class="dash-footer-text">Built with Laravel &amp; vanilla JS</span>
+                <span class="dash-footer-dot">•</span>
+                <span class="dash-footer-text">© {{ date('Y') }}</span>
+        </footer>
     </section>
 </div>
 <script>
