@@ -22,6 +22,15 @@
 
 @php
     $navId = 'cnv-' . uniqid();
+
+    // Single source of truth for the sparkle icon — reused bare (in the
+    // toggle button) and wrapped in the gradient orb (avatars below).
+    $sparkleSvg = '<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">'
+        . '<path d="M12 2 Q13 10 21 12 Q13 14 12 22 Q11 14 3 12 Q11 10 12 2 Z"/>'
+        . '<path d="M19 3 Q19.4 5 22 5.5 Q19.4 6 19 8 Q18.6 6 16 5.5 Q18.6 5 19 3 Z"/>'
+        . '<path d="M6 15 Q6.3 16.3 8.4 16.7 Q6.3 17.1 6 18.4 Q5.7 17.1 3.6 16.7 Q5.7 16.3 6 15 Z"/>'
+        . '</svg>';
+    $orbHtml = '<span class="cnv-orb" aria-hidden="true">' . $sparkleSvg . '</span>';
 @endphp
 
 <div
@@ -39,6 +48,33 @@
         }
         #{{ $navId }} .cnv-display { font-family: 'Space Grotesk', sans-serif; }
         #{{ $navId }} .cnv-mono { font-family: 'JetBrains Mono', monospace; }
+
+        #{{ $navId }} .cnv-orb {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 28%, #c79bea 0%, transparent 45%),
+                radial-gradient(circle at 72% 76%, #f3b98f 0%, transparent 50%),
+                linear-gradient(145deg, #6d5bd6 0%, #4732b8 55%, #2e1f87 100%);
+            box-shadow: 0 0 8px 2px rgba(124,108,255,0.5);
+        }
+        #{{ $navId }} .cnv-orb svg {
+            width: 55%;
+            height: 55%;
+            filter: drop-shadow(0 0 2px rgba(255,255,255,0.55));
+        }
+        #{{ $navId }} .cnv-icon svg {
+            width: 26px;
+            height: 26px;
+            display: block;
+            filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+        }
 
         #{{ $navId }} .cnv-drawer {
             transform: translateY(16px) scale(0.96);
@@ -78,7 +114,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-b border-indigo-500/20 shrink-0">
             <div class="flex items-center gap-2.5">
-                <span class="text-xl leading-none">🧭</span>
+                {!! $orbHtml !!}
                 <div>
                     <p class="cnv-display text-white text-sm font-semibold leading-tight">Career Navigator AI</p>
                     <p class="cnv-mono text-[10px] text-emerald-400 tracking-widest flex items-center gap-1.5 mt-0.5">
@@ -97,7 +133,7 @@
         <!-- Scrollable message body -->
         <div class="cnv-body cnv-scroll flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-slate-950/40">
             <div class="flex gap-2">
-                <span class="text-base leading-none">✨</span>
+                {!! $orbHtml !!}
                 <div class="bg-indigo-500/10 border border-indigo-500/20 text-slate-200 text-sm rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]">
                     Hi! I'm tracking your profile{{ $currentRole ? " as a {$currentRole}" : '' }}{{ $targetIndustry ? " heading into {$targetIndustry}" : '' }}. How can I help today?
                 </div>
@@ -133,7 +169,7 @@
         aria-label="Open Career Navigator assistant"
     >
         <span class="absolute inset-0 rounded-full bg-violet-500/40 animate-ping"></span>
-        <span class="cnv-icon relative z-10 leading-none">✨</span>
+        <span class="cnv-icon relative z-10 leading-none" aria-hidden="true">{!! $sparkleSvg !!}</span>
     </button>
 </div>
 
@@ -163,6 +199,11 @@
         industry: context.targetIndustry ? ` in ${context.targetIndustry}` : '',
     };
 
+    // Shared markup, generated once on the PHP side above — keeps every
+    // avatar (header, messages, typing dots, toggle button) in sync.
+    const ORB_HTML = @json($orbHtml);
+    const SPARKLE_SVG = @json($sparkleSvg);
+
     // ---- Prebuilt Q&A knowledge base --------------------------------------
     // This is the whole "brain" of the assistant. Add as many entries as you
     // like. `pill: true` also renders it as a quick-tap chip in the drawer.
@@ -176,30 +217,27 @@
             keywords: ['applied jobs', 'history', 'my applications', 'track jobs'],
             answer: () => 'To track your application history and review your latest updates, navigate to your Profile page and check the Applied Jobs section.',
         },
-
         {
             question: 'Find skill gaps',
             icon: '🧠',
             pill: true,
             keywords: ['skill gap', 'skills gap', 'missing skill'],
-            answer: () => `Let's analyze your trajectory. Navigate to your personalized Career Match page 
-            to cross-reference your profile, isolate missing critical skills, and unlock custom learning resources`,
+            answer: () => 'Let\'s analyze your trajectory. Navigate to your personalized Career Match page to cross-reference your profile, isolate missing critical skills, and unlock custom learning resources.',
         },
-
         {
-        question: 'Get live jobs',
-        icon: '💼',
-        pill: true,
-        keywords: ['live jobs', 'openings', 'current vacancies', 'find jobs'],
-        answer: () => 'To view real-time vacancies matched to your current background, navigate to the Live Jobs page.',
-    },
-    {
-        question: 'Top career match',
-        icon: '🎯',
-        pill: true,
-        keywords: ['career match', 'best fit', 'compatible roles', 'career paths'],
-        answer: () => 'To discover your highest-probability career paths and alternative trajectories, navigate to the Career Matches dashboard.',
-    },
+            question: 'Get live jobs',
+            icon: '💼',
+            pill: true,
+            keywords: ['live jobs', 'openings', 'current vacancies', 'find jobs'],
+            answer: () => 'To view real-time vacancies matched to your current background, navigate to the Live Jobs page.',
+        },
+        {
+            question: 'Top career match',
+            icon: '🎯',
+            pill: true,
+            keywords: ['career match', 'best fit', 'compatible roles', 'career paths'],
+            answer: () => 'To discover your highest-probability career paths and alternative trajectories, navigate to the Career Matches dashboard.',
+        },
         // Example of a question that's answerable but not shown as a pill —
         // copy this block to add more without cluttering the chip row.
         // {
@@ -245,7 +283,7 @@
         drawer.classList.add('cnv-open');
         drawer.setAttribute('aria-hidden', 'false');
         toggleBtn.setAttribute('aria-expanded', 'true');
-        icon.textContent = '✕';
+        icon.innerHTML = '✕';
         input.focus();
     }
 
@@ -253,7 +291,7 @@
         drawer.classList.remove('cnv-open');
         drawer.setAttribute('aria-hidden', 'true');
         toggleBtn.setAttribute('aria-expanded', 'false');
-        icon.textContent = '🧭';
+        icon.innerHTML = SPARKLE_SVG;
     }
 
     function toggleDrawer() {
@@ -274,13 +312,10 @@
             wrap.appendChild(bubble);
         } else {
             wrap.className = 'flex gap-2';
-            const avatar = document.createElement('span');
-            avatar.className = 'text-base leading-none';
-            avatar.textContent = '🧭';
+            wrap.innerHTML = ORB_HTML;
             const bubble = document.createElement('div');
             bubble.className = 'bg-indigo-500/10 border border-indigo-500/20 text-slate-200 text-sm rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]';
             bubble.textContent = text;
-            wrap.appendChild(avatar);
             wrap.appendChild(bubble);
         }
         body.appendChild(wrap);
@@ -292,13 +327,10 @@
     function appendHtmlMessage(html) {
         const wrap = document.createElement('div');
         wrap.className = 'flex gap-2';
-        const avatar = document.createElement('span');
-        avatar.className = 'text-base leading-none';
-        avatar.textContent = '🧭';
+        wrap.innerHTML = ORB_HTML;
         const bubble = document.createElement('div');
         bubble.className = 'bg-indigo-500/10 border border-indigo-500/20 text-slate-200 text-sm rounded-xl rounded-tl-sm px-3 py-2 max-w-[260px]';
         bubble.innerHTML = html;
-        wrap.appendChild(avatar);
         wrap.appendChild(bubble);
         body.appendChild(wrap);
         body.scrollTop = body.scrollHeight;
@@ -307,8 +339,7 @@
     function showTyping() {
         const wrap = document.createElement('div');
         wrap.className = 'flex gap-2';
-        wrap.innerHTML =
-            '<span class="text-base leading-none">🧭</span>' +
+        wrap.innerHTML = ORB_HTML +
             '<div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl rounded-tl-sm px-3 py-2.5 flex gap-1 items-center">' +
             '<span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>' +
             '<span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay:.15s"></span>' +
